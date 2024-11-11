@@ -1,4 +1,3 @@
-```ruby
 Rails.application.routes.draw do
   root 'dashboard#index'
 
@@ -11,4 +10,3 @@ Rails.application.routes.draw do
 
   resources :production_orders
 end
-```
