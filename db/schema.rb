@@ -10,4 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_11
+ActiveRecord::Schema[8.0].define(version: 2024_11_11_185122) do
+  create_table "machines", force: :cascade do |t|
+    t.integer "number"
+    t.string "operator"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "production_orders", force: :cascade do |t|
+    t.integer "machine_id", null: false
+    t.string "program_number"
+    t.datetime "scheduled_start"
+    t.datetime "scheduled_end"
+    t.datetime "completed_at"
+    t.integer "progress"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["machine_id"], name: "index_production_orders_on_machine_id"
+  end
+
+  add_foreign_key "production_orders", "machines"
+end
