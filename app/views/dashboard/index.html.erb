@@ -1,0 +1,54 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-8">Dashboard de Produção</h1>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- Status Atual -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">Aderência à Programação</h2>
+      <div class="text-4xl font-bold text-center <%= @adherence >= 70 ? 'text-green-600' : 'text-red-600' %>">
+        <%= @adherence %>%
+      </div>
+    </div>
+    
+    <!-- Máquinas Atrasadas -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">Programas Atrasados</h2>
+      <% @delayed_orders.each do |order| %>
+        <div class="mb-4 p-4 bg-red-50 rounded">
+          <p class="font-semibold">PROG <%= order.program_number %></p>
+          <p>Máquina: <%= order.machine.number %></p>
+          <p>Atraso: <%= ((Time.current - order.scheduled_end) / 1.hour).round %>H</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  
+  <!-- Lista de Máquinas -->
+  <div class="mt-8">
+    <h2 class="text-xl font-semibold mb-4">Status das Máquinas</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <% @machines.each do |machine| %>
+        <div class="bg-white rounded-lg shadow p-6">
+          <h3 class="text-lg font-semibold">Máquina <%= machine.number %></h3>
+          <p>Operador: <%= machine.operator %></p>
+          <p>Status: <span class="<%= machine.delayed? ? 'text-red-600' : 'text-green-600' %>">
+            <%= machine.delayed? ? 'Atrasado' : 'Em dia' %>
+          </span></p>
+          
+          <% if order = machine.production_orders.last %>
+            <p>Programa: <%= order.program_number %></p>
+            <p>Progresso: <%= order.progress %>%</p>
+          <% end %>
+          
+          <!-- Formulário para registrar atraso -->
+          <%= form_tag register_delay_machine_path(machine), method: :post, class: 'mt-4' do %>
+            <div class="flex gap-2">
+              <%= number_field_tag :hours, nil, placeholder: 'Horas', class: 'rounded border p-2' %>
+              <%= submit_tag 'Registrar Atraso', class: 'bg-blue-500 text-white rounded px-4 py-2' %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
